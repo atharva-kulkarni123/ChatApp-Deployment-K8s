@@ -48,6 +48,8 @@ This project is a production-style deployment of a **three-tier chat application
 
 4. Deploy Frontend
 --> kubectl apply -f frontend/k8s-frontend.yaml  # Exposed on port 5173
+
+
 🌐 Accessing the Frontend (Port Forward)
 Since NodePort may not work on WSL2 or certain setups, use port-forwarding instead:
 1. kubectl port-forward service/frontend-service 5173:5173
