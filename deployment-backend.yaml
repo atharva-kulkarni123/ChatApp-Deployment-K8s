@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-chatapp
+  labels:
+    role: server-chatapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      role: server-chatapp
+  template:
+    metadata:
+      name: backend-pod
+      labels:
+        role: server-chatapp
+    spec:
+      containers:
+      - name: backend-chatapp
+        image: atharvak2427/backend-chatapp
+        env:
+        - name: MONGODB_URI
+          value: mongodb://<username>:<password>@mongodb-service:27017
+        ports:
+        - containerPort: 5001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    role: server-chatapp
+  ports:
+  - port: 5001
+    targetPort: 5001

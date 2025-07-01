@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+  labels:
+    db: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      db: mongo
+  template:
+    metadata:
+      name: mongo-pod
+      labels:
+        db: mongo
+    spec:
+      containers:
+      - name: mongo
+        image: mongo
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: <username>
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: <password>
+        ports:
+          - name: mongo
+            containerPort: 27017
+            protocol: TCP
+        volumeMounts:
+        - name: mongovol     # Vol name (small) inside the pod and it should match the name on line 35
+          mountPath: /mnt/db  
+  volumeClaimTemplates:
+  - metadata:
+      name: mongovol  # should match with the name on line 31
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: "standard"
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+  labels:
+    db: mongo
+spec:
+  selector:
+    db: mongo
+  clusterIP: None
+  ports:
+  - port: 27017  # default port for mongodb
